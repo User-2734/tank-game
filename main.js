@@ -4,10 +4,12 @@ const gl = canvas.getContext("webgl2");
 // source code for shaders
 const vertex_src = `#version 300 es
 in vec2 a_position;
+uniform float u_aspect;
 void main() {
   // z is 0 for neutral depth
   // w is 1 for no perspective deform
-  gl_Position = vec4(a_position, 0.0, 1.0);
+  vec2 scaled = vec2(a_position.x / u_aspect, a_position.y);
+  gl_Position = vec4(scaled, 0.0, 1.0);
 }`;
 
 const fragment_src = `#version 300 es
@@ -49,13 +51,14 @@ function create_program(vec_shader, frag_shader) {
 }
 
 const program = create_program(vertex_src, fragment_src);
+gl.useProgram(program);
 
 // make a triangle
 const vertices = new Float32Array([
     // x,    y
-    0.0, 0.5,
-    -0.5, -0.5,
-    0.5, -0.5
+    0.0, 1.0,
+    -0.866, -0.5,
+    0.866, -0.5
 ]);
 
 const vbo = gl.createBuffer();
@@ -77,8 +80,12 @@ gl.vertexAttribPointer(
     0              // Offset
 );
 
+// add in aspect ratio correction
+const aspect = canvas.width / canvas.height;
+const aspectLoc = gl.getUniformLocation(program, "u_aspect");
+gl.uniform1f(aspectLoc, aspect);
+
 function draw_vbo() {
-    gl.useProgram(program);
     gl.bindVertexArray(vao);
     gl.drawArrays(gl.TRIANGLES, 0, 3);
     gl.bindVertexArray(null);
@@ -88,6 +95,11 @@ function setup() {
     gl.viewport(0, 0, canvas.width, canvas.height);
     // Set clear color to white, fully opaque
     gl.clearColor(1.0, 1.0, 1.0, 1.0);
+
+    // scale up the resolution of the canvas
+    canvas.width = window.innerWidth * devicePixelRatio;
+    canvas.height = window.innerHeight * devicePixelRatio;
+    gl.viewport(0, 0, canvas.width, canvas.height);
 }
 
 function clear_screen() {
