@@ -49,6 +49,6 @@ To teach myself openGL for 2d web development.
 - Implement 2D rendering pipeline using shaders
 - Practice transformation matrices for multi-part entities
 
-## License:
+## License
 
-MIT License – do whatever you want, just don't sue me.
+[MIT License with Attribution Clause](./LICENSE)

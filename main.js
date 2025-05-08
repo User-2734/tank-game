@@ -1,11 +1,14 @@
 const canvas = document.getElementById('main-canvas');
 const gl = canvas.getContext("webgl");
 
+function initialize_vbo() {
+    
+}
+
 function setup() {
     // Set clear color to red, fully opaque
     gl.clearColor(1.0, 0.0, 0.0, 1.0);
 }
-
 
 function clear_screen() {
     // Clear the color buffer with specified clear color
